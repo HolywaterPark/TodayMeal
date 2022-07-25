@@ -22,18 +22,9 @@ public class Store {
     @Column(columnDefinition = "TEXT")
     private String name;
 
-    @Column(columnDefinition = "TEXT")
-    private String review;
-
     private Double location_y;
     private Double location_x;
 
-    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
+    @OneToMany(cascade = CascadeType.REMOVE)
     private List<Menu> menuList;
-
-    @ManyToOne
-    private SiteUser author;
-
-    @ManyToMany
-    Set<SiteUser> voter;
 }

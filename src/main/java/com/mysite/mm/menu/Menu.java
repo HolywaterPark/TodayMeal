@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -23,6 +24,6 @@ public class Menu {
     @Column
     private String servings;
 
-    @ManyToOne
-    private Store store;
+    @ManyToMany
+    Set<Store> stores;
 }

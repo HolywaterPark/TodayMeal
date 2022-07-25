@@ -12,15 +12,11 @@ import java.util.Optional;
 public class StoreService {
     private final StoreRepository storeRepository;
 
-    public Store create(String name, String review,
-                        Double location_y, Double location_x,
-                        SiteUser author) {
+    public Store create(String name, Double location_x, Double location_y) {
         Store store = new Store();
         store.setName(name);
-        store.setReview(review);
-        store.setLocation_y(location_y);
         store.setLocation_x(location_x);
-        store.setAuthor(author);
+        store.setLocation_y(location_y);
         this.storeRepository.save(store);
         return store;
     }
@@ -34,21 +30,15 @@ public class StoreService {
         }
     }
 
-    public void modify(Store store, String name, String review,
-                       Double location_y, Double location_x) {
+    public void modify(Store store, String name,
+                       Double location_x, Double location_y) {
         store.setName(name);
-        store.setReview(review);
-        store.setLocation_y(location_y);
         store.setLocation_x(location_x);
+        store.setLocation_y(location_y);
         this.storeRepository.save(store);
     }
 
     public void delete(Store store) {
         this.storeRepository.delete(store);
-    }
-
-    public void vote(Store store, SiteUser siteUser) {
-        store.getVoter().add(siteUser);
-        this.storeRepository.save(store);
     }
 }
