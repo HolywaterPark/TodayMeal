@@ -22,8 +22,11 @@ public class Store {
     @Column(columnDefinition = "TEXT")
     private String name;
 
-    private Double location_y;
-    private Double location_x;
+    private Double lat;
+    private Double lng;
+
+    @ManyToOne
+    private SiteUser registrant;
 
     @OneToMany(cascade = CascadeType.REMOVE)
     private List<Menu> menuList;

@@ -13,6 +13,6 @@ public class StoreForm {
     @Size(max=200)
     private String name;
 
-    private Double location_x;
-    private Double location_y;
+    private Double lat;
+    private Double lng;
 }

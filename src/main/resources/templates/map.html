@@ -1,29 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>지도 생성하기</title>
-</head>
-<body>
-<div id="map" style="width:100%;height:350px;"></div>
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" class="container">
+    <div id="map" style="width:100%;height:350px; position: relative; overflow: hidden;"></div>
+</div>
 
-<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=ee2fa2cf713e58eb72f88a643013d3c0"></script>
-<script>
-    var location_x = [[${store.location_x}]];
-    var location_y = [[${store.location_y}]];
-    var mapContainer = document.getElementById('map'),
+<script layout:fragment="script">
+    /*<![CDATA[*/
+    let storeList = [[${storeList}]];
+    let mapContainer = document.getElementById('map'),
         mapOption = {
-            center: new kakao.maps.LatLng(location_x, location_y),
+            center: new kakao.maps.LatLng(33.450705, 126.570677),
             level: 3
         };
 
-    var map = new kakao.maps.Map(mapContainer, mapOption);
+    let kakao_map = new kakao.maps.Map(mapContainer, mapOption);
 
-    var markerPosition = new kakao.maps.LatLng(location_x, location_y);
-    var marker = new kakao.maps.Marker({
-       position : markerPosition
+    // for(let i = 0; i < storeList.length; i++){
+    //     let markerPosition = new kakao.maps.LatLng(storeList[i].lat, storeList[i].lng);
+    //     console.log(markerPosition);
+    //     var marker = new kakao.maps.Marker({
+    //         map: kakao_map,
+    //         position : markerPosition,
+    //         title:  storeList[i].name
+    //     });
+    // }
+    storeList.forEach(function(item){
+            let markerPosition = new kakao.maps.LatLng(storeList[i].lat, storeList[i].lng);
+            var marker = new kakao.maps.Marker({
+                map: kakao_map,
+                position : markerPosition,
+                title:  storeList[i].name
+            });
     });
-    marker.setMap(map);
+    /*]]>*/
 </script>
-</body>
 </html>

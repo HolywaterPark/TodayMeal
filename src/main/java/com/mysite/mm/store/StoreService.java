@@ -5,6 +5,7 @@ import com.mysite.mm.user.SiteUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -12,11 +13,12 @@ import java.util.Optional;
 public class StoreService {
     private final StoreRepository storeRepository;
 
-    public Store create(String name, Double location_x, Double location_y) {
+    public Store create(String name, Double lat, Double lng, SiteUser user) {
         Store store = new Store();
         store.setName(name);
-        store.setLocation_x(location_x);
-        store.setLocation_y(location_y);
+        store.setLat(lat);
+        store.setLng(lng);
+        store.setRegistrant(user);
         this.storeRepository.save(store);
         return store;
     }
@@ -30,11 +32,15 @@ public class StoreService {
         }
     }
 
+    public List<Store> getList() {
+        return this.storeRepository.findAll();
+    }
+
     public void modify(Store store, String name,
-                       Double location_x, Double location_y) {
+                       Double lat, Double lng) {
         store.setName(name);
-        store.setLocation_x(location_x);
-        store.setLocation_y(location_y);
+        store.setLat(lat);
+        store.setLng(lng);
         this.storeRepository.save(store);
     }
 
