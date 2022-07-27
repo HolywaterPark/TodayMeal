@@ -8,11 +8,6 @@ public class MainController {
 
     @RequestMapping("/")
     public String root() {
-        return "redirect:/map";
-    }
-
-    @RequestMapping("/map")
-    public String map() {
-        return "map";
+        return "main_page";
     }
 }

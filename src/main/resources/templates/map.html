@@ -3,34 +3,60 @@
     <div id="map" style="width:100%;height:350px; position: relative; overflow: hidden;"></div>
 </div>
 
-<script layout:fragment="script">
+<script layout:fragment="script" th:inline="javascript">
     /*<![CDATA[*/
     let storeList = [[${storeList}]];
-    let mapContainer = document.getElementById('map'),
-        mapOption = {
-            center: new kakao.maps.LatLng(33.450705, 126.570677),
-            level: 3
-        };
 
-    let kakao_map = new kakao.maps.Map(mapContainer, mapOption);
+    if(navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (position){
+            let lat = position.coords.latitude;
+            let lng = position.coords.longitude;
 
-    // for(let i = 0; i < storeList.length; i++){
-    //     let markerPosition = new kakao.maps.LatLng(storeList[i].lat, storeList[i].lng);
-    //     console.log(markerPosition);
-    //     var marker = new kakao.maps.Marker({
-    //         map: kakao_map,
-    //         position : markerPosition,
-    //         title:  storeList[i].name
-    //     });
-    // }
-    storeList.forEach(function(item){
+            let locPosition = new kakao.maps.LatLng(lat, lng);
+            displayMap(locPosition);
+        });
+    }
+
+    else {
+        let locPosition = new kakao.maps.LatLng(33.450701, 126.570667);
+        displayMap(locPosition);
+    }
+
+    function displayMap(locPosition) {
+        let mapContainer = document.getElementById('map'),
+            mapOption = {
+                center: locPosition,
+                level: 3
+            };
+
+        let kakao_map = new kakao.maps.Map(mapContainer, mapOption);
+
+        for (let i = 0; i < storeList.length; i++) {
             let markerPosition = new kakao.maps.LatLng(storeList[i].lat, storeList[i].lng);
+
             var marker = new kakao.maps.Marker({
                 map: kakao_map,
-                position : markerPosition,
-                title:  storeList[i].name
+                position: markerPosition
             });
-    });
+            var infowindow = new kakao.maps.InfoWindow({
+                content : storeList[i].name
+            });
+            kakao.maps.event.addListener(marker, 'mouseover', makeOverListener(kakao_map, marker, infowindow));
+            kakao.maps.event.addListener(marker, 'mouseout', makeOutListener(infowindow));
+        }
+    }
+
+    function makeOverListener(map, marker, infowindow) {
+        return function () {
+            infowindow.open(map, marker);
+        };
+    }
+    function  makeOutListener(infowindow) {
+        return function () {
+            infowindow.close();
+        };
+    }
+
     /*]]>*/
 </script>
 </html>

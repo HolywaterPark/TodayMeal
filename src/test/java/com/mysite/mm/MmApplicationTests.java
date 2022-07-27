@@ -15,8 +15,8 @@ class MmApplicationTests {
 	@Test
 	void testStore() {
 		Store s1 = new Store();
-		s1.setLocation_x(33.450701);
-		s1.setLocation_y(126.570667);
+		s1.setLat(33.450701);
+		s1.setLng(126.570667);
 		this.storeRepository.save(s1);
 	}
 

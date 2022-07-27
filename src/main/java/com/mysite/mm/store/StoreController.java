@@ -56,6 +56,7 @@ public class StoreController {
         SiteUser siteUser = this.userService.getUser(principal.getName());
         this.storeService.create(storeForm.getName(),
                 storeForm.getLat(), storeForm.getLng(), siteUser);
-        return "redirect:/map";
+        Store store = this.storeService.getStore(storeForm.getName(), storeForm.getLat(), storeForm.getLng());
+        return String.format("redirect:/store/map/%d", store.getId());
     }
 }

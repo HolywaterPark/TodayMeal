@@ -32,6 +32,15 @@ public class StoreService {
         }
     }
 
+    public Store getStore(String name, Double lat, Double lng) {
+        Optional<Store> store = this.storeRepository.findByNameAndLatAndLng(name, lat, lng);
+        if(store.isPresent()) {
+            return store.get();
+        } else {
+            throw new DataNotFoundException("store not found");
+        }
+    }
+
     public List<Store> getList() {
         return this.storeRepository.findAll();
     }

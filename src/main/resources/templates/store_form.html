@@ -11,25 +11,47 @@
 </div>
 
 <script layout:fragment="script">
-    var mapContainer = document.getElementById('map'),
-        mapOption = {
-            center: new kakao.maps.LatLng(33.450701, 126.570667),
-            level: 3
-        };
 
-    var map = new kakao.maps.Map(mapContainer, mapOption);
+    if(navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (position){
+           let lat = position.coords.latitude;
+           let lng = position.coords.longitude;
 
-    var marker = new kakao.maps.Marker({
-        position: map.getCenter(),
-        clickable: true
-    });
-    marker.setMap(map);
+           let locPosition = new kakao.maps.LatLng(lat, lng);
+           displayMap(locPosition);
+        });
+    }
 
-    kakao.maps.event.addListener(map, 'click', function(mouseEvent){
-        var latlng = mouseEvent.latLng;
-        marker.setPosition(latlng);
-        document.getElementsByName("lat")[0].value = latlng.getLat();
-        document.getElementsByName("lng")[0].value = latlng.getLng();
-    });
+    else {
+        let locPosition = new kakao.maps.LatLng(33.450701, 126.570667);
+        displayMap(locPosition);
+    }
+
+    function displayMap(locPosition) {
+        let mapContainer = document.getElementById('map'),
+            mapOption = {
+                center: locPosition,
+                level: 2
+            };
+
+        let map = new kakao.maps.Map(mapContainer, mapOption);
+
+        var marker = new kakao.maps.Marker({
+            position: locPosition,
+            clickable: true
+        });
+        marker.setMap(map);
+
+        document.getElementsByName("lat")[0].value = locPosition.getLat();
+        document.getElementsByName("lng")[0].value = locPosition.getLng();
+
+        kakao.maps.event.addListener(map, 'click', function(mouseEvent){
+            var latlng = mouseEvent.latLng;
+            marker.setPosition(latlng);
+            document.getElementsByName("lat")[0].value = latlng.getLat();
+            document.getElementsByName("lng")[0].value = latlng.getLng();
+        });
+    }
+
 </script>
 </html>
