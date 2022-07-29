@@ -22,10 +22,17 @@ public class RouteService {
         }
     }
 
-    public void create(String name, SiteUser user) {
+    public Integer create(String name, String explanation,
+                          SiteUser user) {
         Route route = new Route();
         route.setName(name);
+        route.setExplanation(explanation);
         route.setAuthor(user);
+        return this.routeRepository.save(route).getId();
+    }
+
+    public void addStore(Route route, Store store){
+        route.getStoreList().add(store);
         this.routeRepository.save(route);
     }
 

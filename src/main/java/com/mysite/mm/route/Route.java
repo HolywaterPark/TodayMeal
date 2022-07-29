@@ -20,8 +20,11 @@ public class Route {
     @Column(length = 200)
     private String name;
 
+    @Column
+    private String explanation;
+
     @OneToMany
-    private List<Store> storeList;
+    private Set<Store> storeList;
 
     @ManyToOne
     private SiteUser author;

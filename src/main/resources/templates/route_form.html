@@ -1,0 +1,161 @@
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" class="map_wrap">
+    <div id="map" style="width:100%;height:350px;"></div>
+    <form>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <div class="mb-3">
+            <label for="name" class="form-label">이름</label>
+            <input type="text" id="name" value="">
+        </div>
+        <div class="mb-3">
+            <label for="explanation" class="form-label">설명</label>
+            <input type="text" id="explanation" value="">
+        </div>
+        <button type="button" id="submit">등록</button>
+    </form>
+</div>
+
+<script layout:fragment="script" th:inline="javascript">
+    /*<![CDATA[*/
+    let storeList = [[${storeList}]];
+    let store_num = storeList.length;
+    let store_clicked = new Array(store_num);
+
+    for(let i = 0; i < store_num; i++){
+        store_clicked[i] = 0;
+    }
+
+    const MARKER_WIDTH = 33, // 기본, 클릭 마커의 너비
+        MARKER_HEIGHT = 36, // 기본, 클릭 마커의 높이
+        OFFSET_X = 12, // 기본, 클릭 마커의 기준 X좌표
+        OFFSET_Y = MARKER_HEIGHT, // 기본, 클릭 마커의 기준 Y좌표
+        OVER_MARKER_WIDTH = 40, // 오버 마커의 너비
+        OVER_MARKER_HEIGHT = 42, // 오버 마커의 높이
+        OVER_OFFSET_X = 13, // 오버 마커의 기준 X좌표
+        OVER_OFFSET_Y = OVER_MARKER_HEIGHT, // 오버 마커의 기준 Y좌표
+        SPRITE_MARKER_URL = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markers_sprites2.png', // 스프라이트 마커 이미지 URL
+        SPRITE_WIDTH = 126, // 스프라이트 이미지 너비
+        SPRITE_HEIGHT = 146, // 스프라이트 이미지 높이
+        SPRITE_GAP = 10; // 스프라이트 이미지에서 마커간 간격   const spriteImageSize = new kakao.maps.Size(SPRITE_WIDTH, SPRITE_HEIGHT);
+
+    const markerSize = new kakao.maps.Size(MARKER_WIDTH, MARKER_HEIGHT), // 기본, 클릭 마커의 크기
+        markerOffset = new kakao.maps.Point(OFFSET_X, OFFSET_Y), // 기본, 클릭 마커의 기준좌표
+        spriteImageSize = new kakao.maps.Size(SPRITE_WIDTH, SPRITE_HEIGHT); // 스프라이트 이미지의 크기
+
+    if(navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (position){
+            let lat = position.coords.latitude;
+            let lng = position.coords.longitude;
+
+            let locPosition = new kakao.maps.LatLng(lat, lng);
+            displayMap(locPosition);
+        });
+    }
+
+    else {
+        let locPosition = new kakao.maps.LatLng(33.450701, 126.570667);
+        displayMap(locPosition);
+    }
+
+    function displayMap(locPosition) {
+        let mapContainer = document.getElementById('map'),
+            mapOption = {
+                center: locPosition,
+                level: 3
+            };
+
+        let kakao_map = new kakao.maps.Map(mapContainer, mapOption);
+
+        for (let i = 0; i < storeList.length; i++) {
+            var gapX = (MARKER_WIDTH + SPRITE_GAP), // 스프라이트 이미지에서 마커로 사용할 이미지 X좌표 간격 값
+            originY = (MARKER_HEIGHT + SPRITE_GAP) * i, // 스프라이트 이미지에서 기본, 클릭 마커로 사용할 Y좌표 값
+            normalOrigin = new kakao.maps.Point(0, originY), // 스프라이트 이미지에서 기본 마커로 사용할 영역의 좌상단 좌표
+            clickOrigin = new kakao.maps.Point(gapX, originY); // 스프라이트 이미지에서 마우스오버 마커로 사용할 영역의 좌상단 좌표
+
+            addMarker(kakao_map, i, normalOrigin, clickOrigin);
+        }
+    }
+
+    function addMarker(map, index, normalOrigin, clickOrigin) {
+        let markerPosition = new kakao.maps.LatLng(storeList[index].lat, storeList[index].lng);
+        let content = storeList[index].name
+        let normalImage = createMarkerImage(markerSize, markerOffset, normalOrigin);
+        let clickImage = createMarkerImage(markerSize, markerOffset, clickOrigin);
+
+        let marker = new kakao.maps.Marker({
+            map: map,
+            position: markerPosition,
+            image: normalImage
+        });
+        marker.normalImage = normalImage;
+
+        let infoWindow = new kakao.maps.InfoWindow({
+            content : content
+        });
+
+        kakao.maps.event.addListener(marker, 'mouseover',function () {
+            infoWindow.open(map, marker);
+        });
+        kakao.maps.event.addListener(marker, 'mouseout', function () {
+            infoWindow.close();
+        });
+        kakao.maps.event.addListener(marker, 'click', function () {
+            store_clicked[index] = 1 - store_clicked[index];
+            marker.setImage(store_clicked[index] == 0 ? normalImage : clickImage);
+        });
+    }
+
+    function createMarkerImage(markerSize, offset, SpriteOrigin) {
+        var markerImage = new kakao.maps.MarkerImage(
+            SPRITE_MARKER_URL,
+            markerSize,
+            {
+                offset: offset,
+                spriteOrigin: SpriteOrigin,
+                spriteSize: spriteImageSize
+            }
+        )
+        return markerImage;
+    }
+
+    $(document).ready(function () {
+       $("#submit").on('click', function() {
+           route_register();
+       })
+    });
+    function route_register() {
+        let route_store_list = new Array();
+        for(let i = 0; i < store_num; i++){
+            if(store_clicked[i] == 1){
+                route_store_list.push(storeList[i].id);
+            }
+        }
+        var ret = {
+            name : $("#name").val(),
+            explanation : $("#explanation").val(),
+            store_list : JSON.stringify(route_store_list)
+        }
+        $.ajax({
+            url : "/route/register",
+            data : ret,
+            dataType : 'text',
+            type : "post",
+            success : function(result){
+                console.log(result);
+                if(result == 1) {
+                    location.href = "/route/register";
+                } else {
+                    alert("전송 실패");
+                }
+            },
+            error : function(request, status, error) {
+                alert(request);
+                alert(status);
+                alert(error);
+            }
+        });
+    };
+
+    /*]]>*/
+</script>
+</html>
