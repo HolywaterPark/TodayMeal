@@ -2,7 +2,9 @@ package com.mysite.mm.route;
 
 import com.mysite.mm.store.Store;
 import com.mysite.mm.user.SiteUser;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -12,6 +14,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
 public class Route {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,4 +34,12 @@ public class Route {
 
     @ManyToMany
     Set<SiteUser> voter;
+
+    @Builder
+    public Route(String name, String explanation, Set<Store> storeList, SiteUser author) {
+        this.name = name;
+        this.explanation = explanation;
+        this.storeList = storeList;
+        this.author = author;
+    }
 }

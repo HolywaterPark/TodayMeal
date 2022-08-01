@@ -11,7 +11,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class RouteService {
-    private RouteRepository routeRepository;
+    private final RouteRepository routeRepository;
 
     public Route getRoute(Integer id) {
         Optional<Route> route = this.routeRepository.findById(id);

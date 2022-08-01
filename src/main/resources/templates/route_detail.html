@@ -3,20 +3,55 @@
   <div id="map" style="width:100%;height:350px; position: relative; overflow: hidden;"></div>
 </div>
 <script layout:fragment="script" th:inline="javascript">
-  const lat = 33.450701;
-  const lng = 126.570667;
-  const mapContainer = document.getElementById('map'),
-          mapOption = {
-            center: new kakao.maps.LatLng(lat, lng),
-            level: 2
-          };
+  let storeList = [[${storeList}]];
+  let store_num = storeList.length;
 
-  const map = new kakao.maps.Map(mapContainer, mapOption);
+  let mean_lat = 0;
+  let mean_lng = 0;
 
-  const markerPosition = new kakao.maps.LatLng(lat, lng);
-  const marker = new kakao.maps.Marker({
-    position : markerPosition
-  });
-  marker.setMap(map);
+  for(let i = 0; i < store_num; i++){
+    mean_lat += storeList[i].lat;
+    mean_lng += storeList[i].lng;
+  }
+  mean_lat /= store_num;
+  mean_lng /= store_num;
+
+  let locPosition = new kakao.maps.LatLng(mean_lat, mean_lng);
+  displayMap(locPosition);
+
+  function displayMap(locPosition) {
+    let mapContainer = document.getElementById('map'),
+            mapOption = {
+              center: locPosition,
+              level: 3
+            };
+
+    let kakao_map = new kakao.maps.Map(mapContainer, mapOption);
+
+    for (let i = 0; i < storeList.length; i++) {
+      addMarker(kakao_map, i);
+    }
+  }
+
+  function addMarker(map, index) {
+    let markerPosition = new kakao.maps.LatLng(storeList[index].lat, storeList[index].lng);
+    let content = storeList[index].name;
+
+    let marker = new kakao.maps.Marker({
+      map: map,
+      position: markerPosition
+    });
+
+    let infoWindow = new kakao.maps.InfoWindow({
+      content : content
+    });
+
+    kakao.maps.event.addListener(marker, 'mouseover',function () {
+      infoWindow.open(map, marker);
+    });
+    kakao.maps.event.addListener(marker, 'mouseout', function () {
+      infoWindow.close();
+    });
+  }
 </script>
 </html>

@@ -5,15 +5,16 @@ import com.mysite.mm.store.StoreService;
 import com.mysite.mm.user.SiteUser;
 import com.mysite.mm.user.UserService;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.json.JSONParser;
-import org.springframework.boot.configurationprocessor.json.JSONArray;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
@@ -37,38 +38,43 @@ public class RouteController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @ResponseBody
     @PostMapping("/register")
-    public String routeRegister(HttpServletRequest request) throws Exception{
-        String name = request.getParameter("name");
-        String explanation = request.getParameter("explanation");
-        String storeList = request.getParameter("storeList");
+    public String routeRegister(@RequestBody RouteRegisterRequestDto routeRegisterRequestDto,
+                                Principal principal) {
+        SiteUser siteUser = this.userService.getUser(principal.getName());
+        String name = routeRegisterRequestDto.getName();
+        String explanation = routeRegisterRequestDto.getExplanation();
+        List<Integer> storeIdList = routeRegisterRequestDto.getStoreIdList();
         System.out.println(name);
         System.out.println(explanation);
-        System.out.println(storeList);
-
-        return "redirect:/route/register";
+        System.out.println(storeIdList);
+        Integer routeId = this.routeService.create(name, explanation, siteUser);
+        Route route = this.routeService.getRoute(routeId);
+        for(Integer id : storeIdList) {
+            Store store = this.storeService.getStore(id);
+            this.routeService.addStore(route, store);
+        }
+        //return String.format("redirect:/route/{%d}", routeId);
+        return "redirect:/";
     }
 
-
 //    @PreAuthorize("isAuthenticated()")
-//    @ResponseBody
 //    @PostMapping("/register")
-//    public String routeRegister(@RequestParam(value="name") String name,
-//                                @RequestParam(value="explanation") String explaneation,
-//                                @RequestParam(value="store_list") List<Integer> storeList,
-//                                BindingResult bindingResult, Principal principal) {
-//        if(bindingResult.hasErrors()) {
-//            return "route_form";
-//        }
+//    public String routeRegister(@RequestBody RouteRegisterRequestDto
+//                                 routeRegisterRequestDto,
+//                                 Principal principal) {
 //        SiteUser siteUser = this.userService.getUser(principal.getName());
-//        Integer routeId = this.routeService.create(name, explaneation, siteUser);
+//        String name = routeRegisterRequestDto.getName();
+//        String explanation = routeRegisterRequestDto.getExplanation();
+//        List<Integer> storeList = routeRegisterRequestDto.getStoreIdList();
+//        Integer routeId = this.routeService.create(name, explanation, siteUser);
 //        Route route = this.routeService.getRoute(routeId);
 //        for(Integer id : storeList) {
 //            Store store = this.storeService.getStore(id);
 //            this.routeService.addStore(route, store);
 //        }
-//        return String.format("redirect:/route/{%d}", routeId);
+//        //return String.format("redirect:/route/{%d}", routeId);
+//        return "redirect:/";
 //    }
 
     @RequestMapping(value = "/{id}")
