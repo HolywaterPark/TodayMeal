@@ -3,7 +3,8 @@
   <div id="map" style="width:100%;height:350px; position: relative; overflow: hidden;"></div>
 </div>
 <script layout:fragment="script" th:inline="javascript">
-  let storeList = [[${storeList}]];
+  let route = [[${route}]];
+  let storeList = route.storeList;
   let store_num = storeList.length;
 
   let mean_lat = 0;

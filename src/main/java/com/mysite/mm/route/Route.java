@@ -26,8 +26,8 @@ public class Route {
     @Column
     private String explanation;
 
-    @OneToMany
-    private Set<Store> storeList;
+    @ManyToMany(cascade = CascadeType.REMOVE)
+    private List<Store> storeList;
 
     @ManyToOne
     private SiteUser author;
@@ -36,7 +36,7 @@ public class Route {
     Set<SiteUser> voter;
 
     @Builder
-    public Route(String name, String explanation, Set<Store> storeList, SiteUser author) {
+    public Route(String name, String explanation, List<Store> storeList, SiteUser author) {
         this.name = name;
         this.explanation = explanation;
         this.storeList = storeList;

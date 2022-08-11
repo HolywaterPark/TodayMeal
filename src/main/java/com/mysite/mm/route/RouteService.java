@@ -6,6 +6,7 @@ import com.mysite.mm.user.SiteUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -23,11 +24,12 @@ public class RouteService {
     }
 
     public Integer create(String name, String explanation,
-                          SiteUser user) {
+                          SiteUser user, List<Store> storeList) {
         Route route = new Route();
         route.setName(name);
         route.setExplanation(explanation);
         route.setAuthor(user);
+        route.setStoreList(storeList);
         return this.routeRepository.save(route).getId();
     }
 

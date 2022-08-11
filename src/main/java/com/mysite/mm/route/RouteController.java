@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -45,37 +46,17 @@ public class RouteController {
         String name = routeRegisterRequestDto.getName();
         String explanation = routeRegisterRequestDto.getExplanation();
         List<Integer> storeIdList = routeRegisterRequestDto.getStoreIdList();
-        System.out.println(name);
-        System.out.println(explanation);
-        System.out.println(storeIdList);
-        Integer routeId = this.routeService.create(name, explanation, siteUser);
-        Route route = this.routeService.getRoute(routeId);
+        List<Store> storeList = new ArrayList<>();
         for(Integer id : storeIdList) {
             Store store = this.storeService.getStore(id);
-            this.routeService.addStore(route, store);
+            storeList.add(store);
         }
-        //return String.format("redirect:/route/{%d}", routeId);
-        return "redirect:/";
-    }
+        System.out.println(storeList);
+        Integer routeId = this.routeService.create(name, explanation, siteUser, storeList);
 
-//    @PreAuthorize("isAuthenticated()")
-//    @PostMapping("/register")
-//    public String routeRegister(@RequestBody RouteRegisterRequestDto
-//                                 routeRegisterRequestDto,
-//                                 Principal principal) {
-//        SiteUser siteUser = this.userService.getUser(principal.getName());
-//        String name = routeRegisterRequestDto.getName();
-//        String explanation = routeRegisterRequestDto.getExplanation();
-//        List<Integer> storeList = routeRegisterRequestDto.getStoreIdList();
-//        Integer routeId = this.routeService.create(name, explanation, siteUser);
-//        Route route = this.routeService.getRoute(routeId);
-//        for(Integer id : storeList) {
-//            Store store = this.storeService.getStore(id);
-//            this.routeService.addStore(route, store);
-//        }
-//        //return String.format("redirect:/route/{%d}", routeId);
-//        return "redirect:/";
-//    }
+        return "redirect:/";
+        //return String.format("redirect:/route/{%d}", routeId);
+    }
 
     @RequestMapping(value = "/{id}")
     public String detail(Model model, @PathVariable("id") Integer id) {
