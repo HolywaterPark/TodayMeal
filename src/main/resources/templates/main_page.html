@@ -5,15 +5,21 @@
       <a th:href="@{/store/register}" class="btn btn-primary">가게 등록하기</a>
     </div>
     <div class="col-6">
-      <a th:href="@{/store/find}" class="btn btn-primary">가게 찾기</a>
-    </div>
-    <div class="col-6">
       <a th:href="@{/store/map}" class="btn btn-primary">가게 보기</a>
     </div>
+  </div>
+  <div class="row my-3">
     <div class="col-6">
       <a th:href="@{/route/register}" class="btn btn-primary">루트 등록</a>
     </div>
+    <div class="col-6">
+      <a th:href="@{/route/list/my}" class="btn btn-primary">내가 작성한 루트 보기</a>
+    </div>
+    <div class="col-6">
+      <a th:href="@{/route/list/all}" class="btn btn-primary">모든 루트 보기</a>
+    </div>
   </div>
+
 </div>
 
 <script layout:fragment="script">

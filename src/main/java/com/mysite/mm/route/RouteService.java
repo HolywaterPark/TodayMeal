@@ -4,8 +4,12 @@ import com.mysite.mm.DataNotFoundException;
 import com.mysite.mm.store.Store;
 import com.mysite.mm.user.SiteUser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,5 +49,13 @@ public class RouteService {
     public void vote(Route route, SiteUser siteUser) {
         route.getVoter().add(siteUser);
         this.routeRepository.save(route);
+    }
+
+    public List<Route> getList() {
+        return this.routeRepository.findAll();
+    }
+
+    public List<Route> getList(SiteUser siteUser) {
+        return this.routeRepository.findByAuthor(siteUser);
     }
 }

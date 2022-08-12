@@ -1,0 +1,25 @@
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" class="container">
+  <table class="table">
+    <thead class="table-dark">
+      <tr class="text-center">
+        <th>루트 이름</th>
+        <th>설명</th>
+        <th>작성자</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="text-center" th:each="route : ${routeList}">
+        <td class="text-start">
+          <a th:href="@{|/route/${route.id}|}" th:text="${route.id}"></a>
+        </td>
+        <td>[[${route.explanation}]]</td>
+        <td>[[${route.author.username}]]</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<script layout:fragment="script" th:inline="javascript">
+
+</script>
+</html>

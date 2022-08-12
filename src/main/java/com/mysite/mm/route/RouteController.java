@@ -6,6 +6,7 @@ import com.mysite.mm.user.SiteUser;
 import com.mysite.mm.user.UserService;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -51,7 +52,6 @@ public class RouteController {
             Store store = this.storeService.getStore(id);
             storeList.add(store);
         }
-        System.out.println(storeList);
         Integer routeId = this.routeService.create(name, explanation, siteUser, storeList);
 
         return "redirect:/";
@@ -63,6 +63,22 @@ public class RouteController {
         Route route = this.routeService.getRoute(id);
         model.addAttribute("route", route);
         return "route_detail";
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/list/my")
+    public String myRoute(Model model, Principal principal) {
+        SiteUser siteUser = this.userService.getUser(principal.getName());
+        List<Route> routeList = this.routeService.getList(siteUser);
+        model.addAttribute("routeList", routeList);
+        return "route_list";
+    }
+
+    @RequestMapping(value = "/list/all")
+    public String allRoute(Model model) {
+        List<Route> routeList = this.routeService.getList();
+        model.addAttribute("routeList", routeList);
+        return "route_list";
     }
 
 }
