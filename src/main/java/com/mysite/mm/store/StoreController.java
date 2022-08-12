@@ -24,8 +24,8 @@ public class StoreController {
     private final UserService userService;
 
     @RequestMapping("/map")
-    public String map_all(Model model) {
-        List<Store> storeList = this.storeService.getList();
+    public String map_list(Model model, @RequestParam(value="kw", defaultValue = "") String kw) {
+        List<Store> storeList = this.storeService.getList(kw);
         model.addAttribute("storeList", storeList);
         return "map";
     }
@@ -59,4 +59,5 @@ public class StoreController {
         Store store = this.storeService.getStore(storeForm.getName(), storeForm.getLat(), storeForm.getLng());
         return String.format("redirect:/store/map/%d", store.getId());
     }
+
 }
