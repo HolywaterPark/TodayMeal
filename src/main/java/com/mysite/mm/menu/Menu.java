@@ -1,6 +1,7 @@
 package com.mysite.mm.menu;
 
 import com.mysite.mm.store.Store;
+import com.mysite.mm.user.SiteUser;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,8 +23,11 @@ public class Menu {
     private Integer price;
 
     @Column
-    private String servings;
+    private String foodType;
 
-    @ManyToMany
-    Set<Store> stores;
+    @ManyToOne
+    private Store store;
+
+    @ManyToOne
+    private SiteUser author;
 }

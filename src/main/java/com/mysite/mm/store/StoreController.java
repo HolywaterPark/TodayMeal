@@ -30,13 +30,6 @@ public class StoreController {
         return "map";
     }
 
-    @RequestMapping("/map/{id}")
-    public String map_store(Model model, @PathVariable("id") Integer id) {
-        Store store = this.storeService.getStore(id);
-        model.addAttribute("store", store);
-        return "map_detail";
-    }
-
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/register")
     public String storeRegister(StoreForm storeForm) {
@@ -57,7 +50,13 @@ public class StoreController {
         this.storeService.create(storeForm.getName(),
                 storeForm.getLat(), storeForm.getLng(), siteUser);
         Store store = this.storeService.getStore(storeForm.getName(), storeForm.getLat(), storeForm.getLng());
-        return String.format("redirect:/store/map/%d", store.getId());
+        return String.format("redirect:/store/detail/%d", store.getId());
     }
 
+    @RequestMapping("/detail/{id}")
+    public String detail(Model model, @PathVariable("id") Integer id) {
+        Store store = this.storeService.getStore(id);
+        model.addAttribute("store", store);
+        return "store_detail";
+    }
 }
